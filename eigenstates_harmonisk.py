@@ -6,15 +6,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+h=6.62607015e-34   # Plancks constant
 e=1.60217662e-19   # electron charge=-e
 
 N=1000               # number of mesh points
 dx=4/N             # step length
 dx2=dx**2          # step length squared
-c=2.0   # constant in Schrödinger equation
+c=2.0    # constant in Schrödinger equation
 
-# exact solution for infinite box potential
-#print('E2=',EeV*2**2,'eV')
+E = lambda n : n + 1/2
+
 
 # input energy guess
 #EeV = 0.3          # input energy in eV: test 0.3 , 0.4 , 0.3760 , 1.5
@@ -23,8 +24,8 @@ c=2.0   # constant in Schrödinger equation
 # potential energy function
 def V(x):
     #y = 0.0
-    #y = x**2/2 # harmonic oscillator
-    y = x**2/2 + x**4 # anharmonic oscillator
+    y = x**2/2 # harmonic oscillator
+    #y = x**2/2 + x**4 # anharmonic oscillator
     return y
 
 # initial values and lists
@@ -40,29 +41,28 @@ dpsi = 0.0          # derivative of wave function at initial position
 
 x_tab = []          # list to store positions for plot
 psi_tab = []        # list to store wave function for plot
+dpsi_tab = []
 x_tab.append(x)
 psi_tab.append(psi)
+dpsi_tab.append(dpsi)
 
-#Odd
-E = 2.7378797895563327
-E = 7.942309864278653
-E = 14.202840661135799
-E = 21.23576792546728
-#Even
-E = 5.179250784485525
-
+E_def = E(0)
 
 for i in range(N) :
-    d2psi = c*(V(x)-E)*psi
+    d2psi = c*(V(x)-E_def)*psi
     psi += dpsi*dx + 0.5*d2psi*dx2
-    d2psinew = c*(V(x+dx)-E)*psi
+    d2psinew = c*(V(x+dx)-E_def)*psi
     dpsi += 0.5*(d2psi+d2psinew)*dx
     x += dx
     x_tab.append(x)
     psi_tab.append(psi)
+    dpsi_tab.append(dpsi)
+
+print('E=',E(0),'eV , psi(x=a)=',psi)
 
 plt.close()
-plt.plot(x_tab, psi_tab, linewidth=2)
+plt.plot(x_tab, psi_tab, linewidth=2, linestyle="solid", color="#131FA0")
+plt.plot(x_tab, dpsi_tab, linewidth=2, linestyle="dotted", color="#A00008")
 plt.xlabel('x/a',fontsize=15)
 plt.ylabel('$\psi$',fontsize=15)
 #plt.savefig('psi.pdf')
